@@ -1,0 +1,85 @@
+import Vue from "vue";
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+const state = {
+  todos: [],
+  completedFilter: 'pending'
+};
+
+const getters = {
+  todoList: state => state.completedFilter === 'all' ? state.todos.slice(0, 12) : state.todos.filter(item => item.completed === (state.completedFilter === 'completed')).slice(0, 12),
+  completedList: state => state.todos.filter(item => !item.completed)
+};
+
+const mutations = {
+  GET_TODOS(state, todos) {
+    state.todos = todos
+  },
+  ADD_TODO(state, { title }) {
+    state.todos.unshift({
+      title,
+      id: Math.floor(1000 * Math.random()),
+      userId: Math.floor(1000 * Math.random()),
+      completed: false
+    })
+  },
+  EDIT_TODO(state, todo) {
+    const index = state.todos.findIndex(item => item.id === +todo.id);
+    const data = [...state.todos];
+    data[index].title = todo.title;
+    data[index].isCompleted = todo.isCompleted;
+    state.todos = data;
+  },
+  REMOVE_TODO(state, todoID) {
+    const todos = state.todos
+    state.todos = todos.filter(item => item.id !== todoID)
+  },
+  COMPLETE_TODO(state, todo) {
+    todo.completed = !todo.completed
+  },
+  CHANGE_STATUS(state, todo) {
+    state.todos.find(item => item.id === todo.id).completed = true
+  },
+  CLEAR_TODO(state) {
+    state.newTodo = ''
+  },
+  FILTER_DATA(state, filter) {
+    state.completedFilter = filter
+  }
+};
+
+const actions = {
+  getTodo({ commit }, todo) {
+    commit('GET_TODOS', todo)
+  },
+  addTodo({ commit }, todo) {
+    commit('ADD_TODO', todo)
+  },
+  editTodo({ commit }, todo) {
+    commit('EDIT_TODO', todo)
+  },
+  removeTodo({ commit }, todoID) {
+    commit('REMOVE_TODO', todoID)
+  },
+  completeTodo({ commit }, todo) {
+    commit('COMPLETE_TODO', todo)
+  },
+  changeStatus({ commit }, todo) {
+    commit('CHANGE_STATUS', todo)
+  },
+  clearTodo({ commit }) {
+    commit('CLEAR_TODO')
+  },
+  setFilter({ commit }, filter) {
+    commit('FILTER_DATA', filter)
+  }
+};
+
+export default new Vuex.Store({
+  state,
+  getters,
+  mutations,
+  actions
+});
