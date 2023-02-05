@@ -63,19 +63,25 @@ export default {
   name: 'TodoActions',
   computed: {
     pageTitle: function () {
-      return this.$route.params.id ? 'Edit' : 'Add'
+      const isDuplicate = this.$route.path.includes('duplicate');
+      return isDuplicate ? 'Duplicate' : this.$route.params.id ? 'Edit' : 'Add'
     },
     today() {
       return new Date().toISOString().split('T')[0]
     }
   },
+  props: ['isDuplicate'],
   methods: {
     handleSubmit() {
       const { id } = this.$route.params;
       const { isCompleted, title, date } = this;
-      const payload = id ? { title, isCompleted, id, date } : { title, date };
-      this.$store.dispatch(id ? 'editTodo' : 'addTodo', payload);
-      alert('Todo Item updated successfully.');
+      if (!title.length) {
+        alert('Title field is required!');
+      }
+      const isDuplicate = this.$route.path.includes('duplicate');
+      const payload = id && !isDuplicate ? { title, isCompleted, id, date } : { title, date };
+      this.$store.dispatch(id && !isDuplicate ? 'editTodo' : 'addTodo', payload);
+      alert(`Todo Item ${isDuplicate ? 'duplicated' : id ? 'updated' : 'created'} successfully.`);
       this.$router.push('/');
     }
   },

@@ -33,16 +33,21 @@
           <td class="p-2 text-center">
             <img v-if="todo.completed" :src="CheckIcon" class="bi bi-check !inline" />
             <img v-if="!todo.completed" :src="RemoveIcon" class="bi bi-x !inline cursor-pointer"
-              @click="handleChangeStatus(todo)" />
+              @click="handleChangeStatus(todo)" title="Check as completed" />
           </td>
           <td class="p-2 text-center">
             <div class="todo-actions">
               <router-link v-bind:to="`/todo/${todo.id}`" exact>
-                <span class="icon px-1 cursor-pointer">
+                <span class="icon px-1 cursor-pointer" title="Edit">
                   <img :src="EditIcon" class="!inline" />
                 </span>
               </router-link>
-              <span class="icon px-1 cursor-pointer" v-on:click="handleRemoveClick(todo.id)">
+              <router-link v-bind:to="`/todo/duplicate/${todo.id}`" exact>
+                <span class="icon px-1 cursor-pointer" title="Duplicate">
+                  <img :src="DuplicateIcon" class="!inline" />
+                </span>
+              </router-link>
+              <span class="icon px-1 cursor-pointer" v-on:click="handleRemoveClick(todo.id)" title="Delete">
                 <img :src="TrashIcon" class="!inline" />
               </span>
             </div>
@@ -58,6 +63,7 @@ import CheckIcon from '@/assets/images/check-icon.svg';
 import RemoveIcon from '@/assets/images/remove-icon.svg';
 import EditIcon from '@/assets/images/edit-icon.svg';
 import TrashIcon from '@/assets/images/trash-icon.svg';
+import DuplicateIcon from '@/assets/images/duplicate-icon.svg';
 import { randomDate } from '@/utils/index';
 
 export default {
@@ -67,7 +73,8 @@ export default {
       CheckIcon,
       RemoveIcon,
       EditIcon,
-      TrashIcon
+      TrashIcon,
+      DuplicateIcon
     }
   },
   methods: {
