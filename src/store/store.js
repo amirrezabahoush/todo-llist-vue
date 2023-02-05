@@ -17,11 +17,12 @@ const mutations = {
   GET_TODOS(state, todos) {
     state.todos = todos
   },
-  ADD_TODO(state, { title }) {
+  ADD_TODO(state, { title, date }) {
     state.todos.unshift({
       title,
       id: Math.floor(1000 * Math.random()),
       userId: Math.floor(1000 * Math.random()),
+      expirationDate: date,
       completed: false
     })
   },
@@ -30,14 +31,12 @@ const mutations = {
     const data = [...state.todos];
     data[index].title = todo.title;
     data[index].isCompleted = todo.isCompleted;
+    data[index].expirationDate = todo.date;
     state.todos = data;
   },
   REMOVE_TODO(state, todoID) {
     const todos = state.todos
     state.todos = todos.filter(item => item.id !== todoID)
-  },
-  COMPLETE_TODO(state, todo) {
-    todo.completed = !todo.completed
   },
   CHANGE_STATUS(state, todo) {
     state.todos.find(item => item.id === todo.id).completed = true
@@ -62,9 +61,6 @@ const actions = {
   },
   removeTodo({ commit }, todoID) {
     commit('REMOVE_TODO', todoID)
-  },
-  completeTodo({ commit }, todo) {
-    commit('COMPLETE_TODO', todo)
   },
   changeStatus({ commit }, todo) {
     commit('CHANGE_STATUS', todo)

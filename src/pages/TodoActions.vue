@@ -28,6 +28,12 @@
                     <option v-for="state in [true, false]" :key="state">{{ state }}</option>
                   </select>
                 </div>
+                <div class="flex flex-col items-start">
+                  <label class="leading-loose">Due date</label>
+                  <input type="date" v-model="date" :min="today"
+                    class="h-12 px-4 py-2 border focus:ring-gray-500 focus:border-gray-900 w-full sm:text-sm border-gray-300 rounded-md focus:outline-none text-gray-600"
+                    placeholder="Event title">
+                </div>
               </div>
               <div class="pt-4 flex items-center space-x-4">
                 <button
@@ -51,18 +57,23 @@
 </template>
 
 <script>
+import { calculateDate } from '@/utils/index';
+
 export default {
   name: 'TodoActions',
   computed: {
     pageTitle: function () {
       return this.$route.params.id ? 'Edit' : 'Add'
+    },
+    today() {
+      return new Date().toISOString().split('T')[0]
     }
   },
   methods: {
     handleSubmit() {
       const { id } = this.$route.params;
-      const { isCompleted, title } = this;
-      const payload = id ? { title, isCompleted, id } : { title };
+      const { isCompleted, title, date } = this;
+      const payload = id ? { title, isCompleted, id, date } : { title, date };
       this.$store.dispatch(id ? 'editTodo' : 'addTodo', payload);
       alert('Todo Item updated successfully.');
       this.$router.push('/');
@@ -73,12 +84,16 @@ export default {
     const item = this.$store.getters.todoList.find(item => item.id === +id);
     return {
       title: id ? item.title : '',
+      date: id ? calculateDate(item.expirationDate) : calculateDate(),
       isCompleted: id ? item.completed : false
     }
   },
-  created() {
-    this.title = '';
-    this.completed = false;
+  watch: {
+    $route() {
+      this.title = '';
+      this.date = calculateDate();
+      this.isCompleted = false;
+    }
   }
 }
 </script>

@@ -4,3 +4,8 @@ export const randomDate = () => {
   const todayTimestamp = new Date().getTime();
   return todayTimestamp + (isPositive ? random : -random);
 }
+
+export const calculateDate = (timestamp) => {
+  const date = timestamp ? new Date(timestamp) : new Date();
+  return date.toISOString().split('T')[0];
+}
